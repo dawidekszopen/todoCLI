@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -25,16 +26,28 @@ type Todo struct {
 var todosList Todos
 
 func importTodos(filePath string) {
+	if _, err := os.Stat(filePath); errors.Is(err, os.ErrNotExist) {
+		f, err := os.Create(filePath)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		f.Close()
+	}
+
 	jsonFile, err := os.Open(filePath)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	value, _ := io.ReadAll((jsonFile))
+	value, _ := io.ReadAll(jsonFile)
 
 	json.Unmarshal(value, &todosList)
+
 	jsonFile.Close()
+
 }
 
 func addTodo() {
