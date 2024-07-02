@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -51,13 +53,15 @@ func importTodos(filePath string) {
 }
 
 func addTodo() {
-	var name string
 
 	fmt.Println("What task do you want to do? ")
-	fmt.Scanln(&name)
+	reader2 := bufio.NewReader(os.Stdin)
+	name, _ := reader2.ReadString('\n')
 
 	currentTime := time.Now()
 	date := fmt.Sprintf("%d-%d-%d %d:%d", currentTime.Day(), currentTime.Month(), currentTime.Year(), currentTime.Hour(), currentTime.Minute())
+
+	name = strings.Trim(name, "\n")
 
 	todo := Todo{
 		Name:       name,
@@ -69,6 +73,7 @@ func addTodo() {
 	todosList.Todos = append(todosList.Todos, todo)
 	saveTodo()
 	fmt.Println("-----------------")
+
 	showTodos()
 }
 
@@ -91,6 +96,11 @@ func doneTodos() {
 		fmt.Println("Something is wrong")
 	} else {
 		todosList.Todos[index-1].Done = true
+
+		currentTime := time.Now()
+		date := fmt.Sprintf("%d-%d-%d %d:%d", currentTime.Day(), currentTime.Month(), currentTime.Year(), currentTime.Hour(), currentTime.Minute())
+
+		todosList.Todos[index-1].DoneDate = date
 		saveTodo()
 	}
 

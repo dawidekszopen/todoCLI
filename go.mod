@@ -1,4 +1,4 @@
-module github.com/dawidekszopen/todoCLI
+module todoCLI
 
 go 1.22.4
 
